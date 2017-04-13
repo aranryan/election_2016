@@ -1,0 +1,57 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r setup, include=FALSE}
+
+library(arlodr)
+library(readxl)
+library(tidyverse)
+library(xts, warn.conflicts=FALSE)
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+
+fpath <- c("~/Project/R projects/election_2016/") 
+
+```
+
+```{r}
+
+fname <- paste0(fpath, "input_data/pres.elect16.results.dec9.csv")
+input_1 <- readr::read_csv(fname, col_names = TRUE)
+
+```
+
+```{r}
+winner_uniqe_fips <- input_1 %>%
+  filter(!(is.na(county))) %>%
+  distinct(fips, .keep_all=TRUE) %>%
+  select(county, fips, st, lead)
+  
+```
+
+```{r}
+dtvote_uniqe_fips <- input_1 %>%
+  filter(!(is.na(county))) %>%
+  distinct(fips, .keep_all=TRUE) %>%
+  filter(cand == "Donald Trump") %>%
+  select(county, fips, st, cand, pct)
+  
+```
+
+
+
+```{r}
+
+
+write_excel_csv(winner_uniqe_fips, path=paste0(fpath, "output_data/winner_uniqe_fips.csv"))
+write_excel_csv(dtvote_uniqe_fips, path=paste0(fpath, "output_data/dtvote_uniqe_fips.csv"))
+
+```
+
